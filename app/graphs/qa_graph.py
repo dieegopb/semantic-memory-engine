@@ -6,7 +6,15 @@ from app.graphs.nodes.search_node import search_node
 from app.graphs.nodes.llm_node import llm_node
 
 
+# Cache compiled graph to avoid recompiling on every request
+_compiled_graph = None
+
+
 def build_graph():
+    global _compiled_graph
+    if _compiled_graph is not None:
+        return _compiled_graph
+
     graph = StateGraph(QAState)
 
     graph.add_node("memory", memory_node)
@@ -18,10 +26,9 @@ def build_graph():
     graph.add_edge("search", "llm")
     graph.add_edge("llm", END)
 
-    return graph.compile()
+    _compiled_graph = graph.compile()
+    return _compiled_graph
 
-
-# 🔥 ISSO AQUI PRECISA EXISTIR
 def run_graph(user_id: str, question: str):
     graph = build_graph()
 

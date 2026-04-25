@@ -4,3 +4,5 @@ langchain
 openai
 pydantic
 langchain-openai
+pytest
+pytest-cov
